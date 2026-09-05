@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 680">
+<defs>
+ <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#090711"/><stop offset=".55" stop-color="#b94e87"/><stop offset="1" stop-color="#12091b"/></linearGradient>
+ <radialGradient id="a"><stop stop-color="#fff3c8" stop-opacity=".8"/><stop offset=".3" stop-color="#b94e87" stop-opacity=".35"/><stop offset="1" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="520" height="680" rx="34" fill="url(#g)"/>
+<circle cx="260" cy="250" r="190" fill="url(#a)"/>
+<circle cx="260" cy="235" r="88" fill="#d7b59d"/>
+<path d="M175 225 Q180 105 260 105 Q340 105 350 225 Q305 180 175 225Z" fill="#24182b"/>
+<path d="M125 610 Q135 390 260 380 Q385 390 395 610Z" fill="#171323" stroke="#d9ae63" stroke-width="3"/>
+<path d="M155 610 Q185 455 260 430 Q335 455 365 610" fill="#b94e87" opacity=".22"/>
+<circle cx="225" cy="235" r="8" fill="#20152c"/><circle cx="295" cy="235" r="8" fill="#20152c"/>
+<text x="260" y="70" text-anchor="middle" fill="#fff1c5" font-family="Georgia,serif" font-size="30" font-weight="700">ALANA</text>
+<text x="260" y="650" text-anchor="middle" fill="#e7d8ff" font-family="Arial,sans-serif" font-size="20">ORÁCULO LUNAR</text>
+<text x="260" y="335" text-anchor="middle" fill="#ffe8a6" font-family="Georgia,serif" font-size="64">☾</text>
+</svg>
