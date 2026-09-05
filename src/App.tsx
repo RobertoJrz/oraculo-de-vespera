@@ -4,6 +4,7 @@ import {
   Shield, Sparkles, Swords, Volume2, VolumeX, Zap
 } from "lucide-react";
 import "./index.css";
+import "./story-media.css";
 import MagicBackground from "./components/MagicBackground";
 
 type Screen = "title" | "prologue" | "reading" | "battle" | "ending" | "arsenal";
@@ -285,6 +286,28 @@ function HpBar({ name, hp, max, side }: { name: string; hp: number; max: number;
   </div>;
 }
 
+const SCENE_ART: Record<string, { image: string; title: string; subtitle: string; gallery: string[] }> = {
+  portal: { image: "/media/art/portal.svg", title: "A Porta Impossível", subtitle: "O primeiro chamado de Vespera.", gallery: ["/media/art/vespera-particles.gif", "/media/art/city.svg"] },
+  flash: { image: "/media/art/city.svg", title: "Vespera", subtitle: "Uma cidade entre magia, neon e duas luas.", gallery: ["/media/gifs/flash.gif", "/media/art/vespera-particles.gif"] },
+  spider: { image: "/media/art/spider.svg", title: "Distrito das Teias", subtitle: "A guerra das dimensões começou.", gallery: ["/media/gifs/aranha.gif", "/media/art/time-rift.gif"] },
+  rift: { image: "/media/art/rift.svg", title: "A Ponte Celeste", subtitle: "Uma escolha que muda o peso da história.", gallery: ["/media/art/time-rift.gif", "/media/art/city.svg"] },
+  boss: { image: "/media/art/boss.svg", title: "Devorador de Instantes", subtitle: "03:00. O tempo começou a morrer.", gallery: ["/media/videos/batalha-chefe-01.mp4", "/media/art/time-rift.gif"] },
+  romance: { image: "/media/art/romance.svg", title: "Depois da Batalha", subtitle: "Quando o silêncio diz mais que qualquer magia.", gallery: ["/media/art/vespera-particles.gif", "/media/art/end.svg"] },
+  library: { image: "/media/art/library.svg", title: "Biblioteca Infinita", subtitle: "Livros que ainda não foram escritos.", gallery: ["/media/art/library.svg", "/media/art/vespera-particles.gif"] },
+  end: { image: "/media/art/end.svg", title: "O Coração de Vespera", subtitle: "Dois nomes escritos entre as estrelas.", gallery: ["/media/art/end.svg", "/media/art/portal.svg"] }
+};
+
+function mediaSrcForNode(nodeId: string, cinematic?: string) {
+  if (nodeId === "city") return "flash";
+  if (nodeId === "spider") return "spider";
+  if (nodeId === "rift") return "rift";
+  if (nodeId === "boss1") return "boss";
+  if (nodeId === "romance") return "romance";
+  if (nodeId === "chapter4") return "library";
+  if (nodeId === "end") return "end";
+  return cinematic || "portal";
+}
+
 function Media({ kind }: { kind?: string }) {
   if (!kind) return null;
   const files: Record<string, string> = {
@@ -294,15 +317,56 @@ function Media({ kind }: { kind?: string }) {
     boss: "/media/videos/batalha-chefe-01.mp4"
   };
   const src = files[kind];
-  const isGif = src.endsWith(".gif");
-  return <div className="cinematic">
-    <div className="cinematic-label"><Sparkles size={14} /> EVENTO CINEMÁTICO</div>
-    {isGif ? <img src={src} alt="Animação da cena" onError={(e) => { e.currentTarget.style.display = "none"; }} /> :
-      <video src={src} muted autoPlay loop playsInline onError={(e) => { e.currentTarget.style.display = "none"; }} />}
-    <div className="cinematic-fallback">
-      <Sparkles size={28} />
-      <span>{kind === "boss" ? "O chefe entrou na arena" : kind === "flash" ? "Um raio vermelho corta o céu" : kind === "spider" ? "Uma teia atravessa a noite" : "O portal dimensional se abre"}</span>
-      <small>Adicione seu GIF/vídeo em <code>public/media</code> para substituir esta cena.</small>
+  const scene = SCENE_ART[kind] ?? SCENE_ART.portal;
+  const isGif = src?.endsWith(".gif");
+  const isVideo = src?.endsWith(".mp4");
+
+  return <section className="cinematic cinematic-rich">
+    <div className="cinematic-label"><Sparkles size={14} /> EVENTO CINEMÁTICO • {scene.title.toUpperCase()}</div>
+    <div className="cinematic-stage">
+      <img className="cinematic-poster" src={scene.image} alt={scene.title} />
+      {src && (isGif
+        ? <img className="cinematic-motion" src={src} alt={`Animação: ${scene.title}`} onError={(e) => { e.currentTarget.style.display = "none"; }} />
+        : isVideo
+          ? <video className="cinematic-motion" src={src} muted autoPlay loop playsInline onError={(e) => { e.currentTarget.style.display = "none"; }} />
+          : null)}
+      <div className="cinematic-overlay" />
+      <div className="cinematic-caption">
+        <span>{scene.title}</span>
+        <small>{scene.subtitle}</small>
+      </div>
+    </div>
+    <div className="cinematic-gallery">
+      {scene.gallery.map((file, i) => file.endsWith(".mp4")
+        ? <video key={file} src={file} muted autoPlay loop playsInline />
+        : <img key={file} src={file} alt={`Memória visual ${i + 1}`} />)}
+    </div>
+  </section>;
+}
+
+function StoryGallery({ nodeId }: { nodeId: string }) {
+  const key = mediaSrcForNode(nodeId);
+  const scene = SCENE_ART[key] ?? SCENE_ART.portal;
+  return <div className="story-gallery">
+    <div className="gallery-title"><Sparkles size={15} /> FRAGMENTOS DA MEMÓRIA <span>{scene.title}</span></div>
+    <div className="gallery-grid">
+      <img src={scene.image} alt={scene.title} />
+      {scene.gallery.map((file, i) => file.endsWith(".mp4")
+        ? <video key={file} src={file} muted autoPlay loop playsInline />
+        : <img key={file} src={file} alt={`Fragmento ${i + 1}`} />)}
+    </div>
+  </div>;
+}
+
+function CharacterPortrait({ who, build }: { who: "roberto" | "alana"; build: CharacterBuild }) {
+  const portrait = who === "roberto" ? "/media/characters/roberto.svg" : "/media/characters/alana.svg";
+  return <div className={`character-portrait ${who}`}>
+    <img src={portrait} alt={`Retrato de ${who === "roberto" ? "Roberto" : "Alana"}`} />
+    <div className="portrait-glow" />
+    <div className="portrait-info">
+      <span>{build.className}</span>
+      <b>{build.outfit}</b>
+      <small>{build.powers.slice(0, 3).join(" • ")}</small>
     </div>
   </div>;
 }
@@ -349,6 +413,26 @@ function Arsenal({ game, setGame, onClose }: { game: GameState; setGame: React.D
       <div className="switcher">
         <button className={who === "roberto" ? "active" : ""} onClick={() => setWho("roberto")}>⚡ ROBERTO</button>
         <button className={who === "alana" ? "active" : ""} onClick={() => setWho("alana")}>🌙 ALANA</button>
+      </div>
+    </section>
+    <section className="character-showcase">
+      <CharacterPortrait who={who} build={build} />
+      <div className="character-dossier">
+        <div className="eyebrow">FICHA DO DESTINO</div>
+        <h2>{name}</h2>
+        <p>As mudanças abaixo são persistentes e acompanham o personagem durante a campanha.</p>
+        <div className="dossier-stats">
+          <span>❤️ Vínculo <b>{game.affection}</b></span>
+          <span>🤝 Confiança <b>{game.trust}</b></span>
+          <span>⚡ Coragem <b>{game.courage}</b></span>
+          <span>🔮 Curiosidade <b>{game.curiosity}</b></span>
+        </div>
+        <div className="dossier-tags">
+          <span>CLASSE • {build.className}</span>
+          <span>TRAJE • {build.outfit}</span>
+          <span>PODERES • {build.powers.length}</span>
+          <span>ITENS • {build.items.length}</span>
+        </div>
       </div>
     </section>
     <div className="arsenal-grid">
@@ -513,11 +597,12 @@ export default function App() {
         <div className="meters"><span>❤️ {game.affection}</span><span>🤝 {game.trust}</span><span>⚡ {game.courage}</span><span>🔮 {game.curiosity}</span></div>
       </aside>
       <article className="story">
-        {node.cinematic && <Media kind={node.cinematic}/>}
+        <Media kind={mediaSrcForNode(game.nodeId, node.cinematic)} />
         <div className="chapter-label">{node.chapterTitle}</div>
         <h1>{node.title}</h1>
         <div className="location">✦ {node.location} • {node.mood}</div>
         {node.paragraphs(game).map((p, i) => <p key={i}>{p}</p>)}
+        <StoryGallery nodeId={game.nodeId} />
         {node.quote && <blockquote>{node.quote(game)}</blockquote>}
         {game.screen === "battle" && <div className="boss-hud">
           <div className="boss-name"><Swords size={18}/> O DEVORADOR DE INSTANTES <span>{Math.max(0, Math.round(game.bossHp))} HP</span></div>

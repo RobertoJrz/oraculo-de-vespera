@@ -1,0 +1,33 @@
+ORÁCULO DE VESPERA — IMAGENS PRONTAS
+
+1. Copie a pasta/arquivos deste pacote para:
+   public/images/vespera/
+
+2. Os nomes já foram organizados para serem usados pelo jogo:
+   04-portal.png
+   05-vespera.png
+   06-distrito-das-teias.png
+   07-ponte-celeste.png
+   08-devorador-de-instantes.png
+   09-depois-da-batalha.png
+   10-biblioteca-infinita.png
+   11-coracao-de-vespera.png
+   12-final-oraculo-sorriu.png
+
+3. Também existem imagens para:
+   - capa do menu
+   - criação de personagens
+   - Alana
+   - arsenal
+   - retratos de Roberto e Alana
+   - HUD inferior
+
+IMPORTANTE:
+A imagem original era uma composição única. Estes arquivos são recortes individuais,
+então NÃO é necessário colocar a imagem inteira no jogo. Cada cena pode receber sua
+própria arte.
+
+Próximo passo recomendado:
+alterar o App.tsx para mostrar automaticamente a imagem correspondente a cada node
+(portal, city, spider, rift, boss1, romance, chapter4 e end), além de usar os retratos
+nos cards de Roberto/Alana e no Arsenal.
