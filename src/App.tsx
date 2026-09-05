@@ -4,6 +4,7 @@ import {
   Shield, Sparkles, Swords, Volume2, VolumeX, Zap
 } from "lucide-react";
 import "./index.css";
+import MagicBackground from "./components/MagicBackground";
 
 type Screen = "title" | "prologue" | "reading" | "battle" | "ending" | "arsenal";
 type Turn = "roberto" | "alana" | "together";
@@ -17,6 +18,7 @@ type CharacterBuild = {
   unlockedPowers: string[];
   unlockedItems: string[];
 };
+
 type GameState = {
   screen: Screen;
   prologueStep: number;
@@ -102,7 +104,7 @@ function saveGame(s: GameState) {
 }
 
 function adaptiveProfile(s: GameState) {
-  const traits = [];
+  const traits: string[] = [];
   if (s.courage >= 4) traits.push("corajosos");
   if (s.curiosity >= 4) traits.push("investigadores");
   if (s.trust >= 5) traits.push("inseparáveis");
@@ -126,6 +128,7 @@ const CLASS_DATA: Record<string, { power: string; bonus: string }> = {
   "Oráculo": { power: "Cura Lunar", bonus: "cura e leitura de possibilidades" },
   "Ilusionista": { power: "Ilusão", bonus: "confusão e manipulação do campo" }
 };
+
 const OUTFITS = [
   ["Aventureiro", "Traje de entrada em Vespera"],
   ["Armadura Celeste", "Proteção forjada nas estrelas"],
@@ -134,11 +137,11 @@ const OUTFITS = [
   ["Roupa do Aranha", "Um aceno ao herói que vocês conheceram"],
   ["Traje Real de Vespera", "Elegância para quem já virou lenda"]
 ];
+
 const nodes: Record<string, StoryNode> = {
   portal: {
     chapter: 1, chapterTitle: "ARCO I — O ORÁCULO", title: "A noite em que Vespera abriu os olhos",
-    location: "Observatório de Vespera", mood: "A realidade está ficando fina.",
-    cinematic: "portal",
+    location: "Observatório de Vespera", mood: "A realidade está ficando fina.", cinematic: "portal",
     paragraphs: s => [
       "23h47. Roberto e Alana estão juntos quando todas as luzes piscam ao mesmo tempo.",
       "Não é falta de energia. É como se alguma coisa tivesse desligado o mundo por três segundos.",
@@ -154,7 +157,7 @@ const nodes: Record<string, StoryNode> = {
   },
   city: {
     chapter: 1, chapterTitle: "ARCO I — O ORÁCULO", title: "A cidade que não deveria existir",
-    location: "Vespera", mood: "Magia, neon e criaturas impossíveis.",
+    location: "Vespera", mood: "Magia, neon e criaturas impossíveis.", cinematic: "flash",
     paragraphs: s => [
       "Vocês caem de pé em uma cidade gigantesca, construída sobre ilhas flutuantes.",
       "Dragões passam entre prédios. Uma lua azul gira ao redor de outra lua. E, em uma praça distante, alguém grita que o Homem-Aranha está preso em uma teia temporal.",
@@ -163,7 +166,6 @@ const nodes: Record<string, StoryNode> = {
       "É o Flash. E ele está assustado."
     ],
     quote: s => s.curiosity > s.courage ? "“Se querem respostas, parem de correr e comecem a perguntar.”" : "“Se querem sobreviver, aprendam a correr.”",
-    cinematic: "flash",
     choices: [
       { id: "flash-help", actor: "together", label: "Ajudar o Flash", hint: "Vocês entram na confusão imediatamente.", target: "spider", effect: s => ({ courage: s.courage + 2, trust: s.trust + 1, flags: addUnique(s.flags, "aliado-flash"), memories: [...s.memories, "O Flash viu vocês lutando lado a lado."] }) },
       { id: "flash-question", actor: "alana", label: "Alana pergunta o que está acontecendo", hint: "Antes de agir, descobrir quem está causando a ruptura.", target: "spider", effect: s => ({ curiosity: s.curiosity + 2, affection: s.affection + 1, flags: addUnique(s.flags, "pista-flash"), memories: [...s.memories, "Alana conseguiu uma pista diretamente do Flash."] }) },
@@ -172,11 +174,9 @@ const nodes: Record<string, StoryNode> = {
   },
   spider: {
     chapter: 2, chapterTitle: "ARCO II — A GUERRA DAS DIMENSÕES", title: "O homem por trás da máscara",
-    location: "Distrito das Teias", mood: "Humor no meio do perigo.",
-    cinematic: "spider",
+    location: "Distrito das Teias", mood: "Humor no meio do perigo.", cinematic: "spider",
     paragraphs: s => [
-      "Uma teia passa raspando pela cabeça de Roberto.",
-      "“Foi mal!”",
+      "Uma teia passa raspando pela cabeça de Roberto.", "“Foi mal!”",
       "Homem-Aranha cai de cabeça para baixo diante de vocês. “Então vocês são o casal que o Oráculo está procurando. Legal. Nada assustador nisso.”",
       "Ele aponta para o céu. Uma rachadura está crescendo sobre Vespera.",
       "“A coisa que está vindo de lá não quer conquistar a cidade. Quer apagar a história dela.”",
@@ -209,8 +209,7 @@ const nodes: Record<string, StoryNode> = {
   },
   boss1: {
     chapter: 3, chapterTitle: "ARCO III — O ABISMO", title: "CHEFE: O DEVORADOR DE INSTANTES",
-    location: "Ponte Celeste — Arena", mood: "Primeiro grande combate.",
-    cinematic: "boss",
+    location: "Ponte Celeste — Arena", mood: "Primeiro grande combate.", cinematic: "boss",
     paragraphs: s => [
       "O Devorador de Instantes fecha a mão.",
       "A ponte envelhece. Prédios viram ruínas em segundos.",
@@ -229,11 +228,9 @@ const nodes: Record<string, StoryNode> = {
     chapter: 3, chapterTitle: "ARCO III — O ABISMO", title: "Depois da batalha",
     location: "Terraço da Torre do Relógio", mood: "Silêncio depois da tempestade.",
     paragraphs: s => [
-      "O monstro desaparece.",
-      "Por alguns segundos, Vespera fica completamente silenciosa.",
+      "O monstro desaparece.", "Por alguns segundos, Vespera fica completamente silenciosa.",
       "Alana percebe que Roberto está machucado. Roberto percebe que Alana está tremendo.",
-      "Nenhum dos dois fala.",
-      "Então o Oráculo abre uma pequena janela de luz entre vocês.",
+      "Nenhum dos dois fala.", "Então o Oráculo abre uma pequena janela de luz entre vocês.",
       "“Vocês começaram esta jornada tentando descobrir o que Vespera queria. Agora Vespera quer descobrir o que vocês querem um do outro.”"
     ],
     quote: s => s.trust >= 5 ? "“Talvez a nossa maior força seja não deixar o outro enfrentar nada sozinho.”" : "“A aventura mal começou. E já está difícil fingir que isso é apenas uma aventura.”",
@@ -266,15 +263,12 @@ nodes.end = {
   chapter: 5, chapterTitle: "ARCO V — A PRIMEIRA VERDADE", title: "A história está apenas começando",
   location: "O Coração de Vespera", mood: "Uma porta para algo muito maior.",
   paragraphs: s => [
-    "O mapa desaparece.",
-    "As estrelas acima de vocês formam dois nomes: ROBERTO e ALANA.",
+    "O mapa desaparece.", "As estrelas acima de vocês formam dois nomes: ROBERTO e ALANA.",
     "O Oráculo finalmente revela a verdade: a aventura inteira foi construída para observar como vocês tomariam decisões quando o mundo colocasse um contra o outro.",
-    "Mas existe uma falha no plano.",
-    "O Oráculo aprendeu a torcer por vocês.",
+    "Mas existe uma falha no plano.", "O Oráculo aprendeu a torcer por vocês.",
     `Perfil aprendido nesta primeira parte: ${adaptiveProfile(s)}.`,
     `Memórias importantes registradas: ${s.memories.length}.`,
-    "E então uma nova porta aparece.",
-    "Atrás dela existe uma cidade inteira em guerra."
+    "E então uma nova porta aparece.", "Atrás dela existe uma cidade inteira em guerra."
   ],
   choices: [
     { id: "continue", actor: "together", label: "🚪 Continuar a aventura", hint: "A campanha continua a partir deste estado.", target: "portal", effect: s => ({ chapter: 6, memories: [...s.memories, "Vocês decidiram continuar. O Oráculo abriu um novo arco."] }) },
@@ -313,6 +307,12 @@ function Media({ kind }: { kind?: string }) {
   </div>;
 }
 
+function AppBackground({ children }: { children: React.ReactNode }) {
+  return <>
+    <MagicBackground />
+    <div className="game-content">{children}</div>
+  </>;
+}
 
 function Arsenal({ game, setGame, onClose }: { game: GameState; setGame: React.Dispatch<React.SetStateAction<GameState>>; onClose: () => void }) {
   const [who, setWho] = useState<"roberto" | "alana">("roberto");
@@ -393,19 +393,20 @@ export default function App() {
     setLastActor(c.actor);
     let effect = c.effect(game);
     const activePowers = [...game.robertoBuild.powers, ...game.alanaBuild.powers];
-    if (c.battle && activePowers.includes("Supervelocidade")) effect = { ...effect, bossHp: (effect.bossHp ?? game.bossHp) - 700 };
-    if (c.battle && activePowers.includes("Fogo Arcano")) effect = { ...effect, bossHp: (effect.bossHp ?? game.bossHp) - 600 };
-    if (c.battle && activePowers.includes("Teletransporte")) effect = { ...effect, robertoHp: Math.min(game.robertoMaxHp, (effect.robertoHp ?? game.robertoHp) + 80), alanaHp: Math.min(game.alanaMaxHp, (effect.alanaHp ?? game.alanaHp) + 80) };
-    if (c.battle && activePowers.includes("Cura Lunar")) effect = { ...effect, robertoHp: Math.min(game.robertoMaxHp, (effect.robertoHp ?? game.robertoHp) + 160), alanaHp: Math.min(game.alanaMaxHp, (effect.alanaHp ?? game.alanaHp) + 160) };
-    let next: GameState = {
-      ...game,
-      ...effect,
-      history: [...game.history, c.id],
-      turn: c.actor,
-      paused: false
-    };
+
+    if (c.battle && activePowers.includes("Supervelocidade"))
+      effect = { ...effect, bossHp: (effect.bossHp ?? game.bossHp) - 700 };
+    if (c.battle && activePowers.includes("Fogo Arcano"))
+      effect = { ...effect, bossHp: (effect.bossHp ?? game.bossHp) - 600 };
+    if (c.battle && activePowers.includes("Teletransporte"))
+      effect = { ...effect, robertoHp: Math.min(game.robertoMaxHp, (effect.robertoHp ?? game.robertoHp) + 80), alanaHp: Math.min(game.alanaMaxHp, (effect.alanaHp ?? game.alanaHp) + 80) };
+    if (c.battle && activePowers.includes("Cura Lunar"))
+      effect = { ...effect, robertoHp: Math.min(game.robertoMaxHp, (effect.robertoHp ?? game.robertoHp) + 160), alanaHp: Math.min(game.alanaMaxHp, (effect.alanaHp ?? game.alanaHp) + 160) };
+
+    let next: GameState = { ...game, ...effect, history: [...game.history, c.id], turn: c.actor, paused: false };
     next.robertoHp = clamp(next.robertoHp, 0, next.robertoMaxHp);
     next.alanaHp = clamp(next.alanaHp, 0, next.alanaMaxHp);
+
     if (c.battle) {
       next.bossHp = clamp(next.bossHp, 0, next.bossMaxHp);
       if (next.bossHp <= 0) {
@@ -442,9 +443,9 @@ export default function App() {
     setGame({ ...emptyGame, screen: "prologue" });
   }
 
-  if (game.screen === "arsenal") return <Arsenal game={game} setGame={setGame} onClose={() => setGame(g => ({ ...g, screen: g.arsenalOpenFrom === "title" ? "title" : "reading" }))} />;
+  if (game.screen === "arsenal") return <AppBackground><Arsenal game={game} setGame={setGame} onClose={() => setGame(g => ({ ...g, screen: g.arsenalOpenFrom === "title" ? "title" : g.arsenalOpenFrom === "prologue" ? "prologue" : "reading" }))} /></AppBackground>;
 
-  if (game.screen === "title") return <main className="vespera">
+  if (game.screen === "title") return <AppBackground><main className="vespera">
     <section className="title-screen">
       <div className="title-orbit"><div className="orbit-dot" /></div>
       <div className="eyebrow">UMA AVENTURA PARA DOIS</div>
@@ -454,11 +455,9 @@ export default function App() {
       <button className="primary" onClick={start}><Sparkles size={18}/> NOVA CAMPANHA <ArrowRight size={18}/></button>
       <button className="secondary" onClick={() => setGame({ ...emptyGame, screen: "arsenal", arsenalOpenFrom: "title" })}><Swords size={16}/> CRIAR PERSONAGENS</button>
       {loadSave() && <button className="secondary" onClick={() => setGame(s => ({...s, screen: s.nodeId === "boss1" ? "battle" : "reading"}))}><Play size={16}/> CONTINUAR CAMPANHA</button>}
-      <div className="feature-row">
-        <span>❤️ Vida de ambos</span><span>⚔️ Chefes</span><span>🧠 Memória adaptativa</span><span>🎬 Cenas cinematográficas</span>
-      </div>
+      <div className="feature-row"><span>❤️ Vida de ambos</span><span>⚔️ Chefes</span><span>🧠 Memória adaptativa</span><span>🎬 Cenas cinematográficas</span></div>
     </section>
-  </main>;
+  </main></AppBackground>;
 
   if (game.screen === "prologue") {
     const pages = [
@@ -467,15 +466,15 @@ export default function App() {
       ["A regra", "Não existe resposta perfeita. Existe consequência. O jogo vai lembrar do que vocês fizeram, como fizeram e quem ficou ao lado de quem."]
     ];
     const [title, text] = pages[game.prologueStep];
-    return <main className="vespera prologue"><div className="book">
+    return <AppBackground><main className="vespera prologue"><div className="book">
       <BookOpen size={22}/><span>PRÓLOGO • {game.prologueStep + 1}/3</span>
       <h1>{title}</h1><p>{text}</p>
       <button className="primary" onClick={() => game.prologueStep < 2 ? setGame(s => ({...s, prologueStep: s.prologueStep + 1})) : setGame(s => ({...s, screen: "arsenal", arsenalOpenFrom: "prologue"}))}>{game.prologueStep < 2 ? "VIRAR A PÁGINA" : "CRIAR PERSONAGENS"} <ArrowRight size={18}/></button>
       {game.prologueStep === 2 && <button className="secondary" onClick={() => setGame(s => ({...s, screen: "reading", nodeId: "portal"}))}>COMEÇAR SEM PERSONALIZAR</button>}
-    </div></main>;
+    </div></main></AppBackground>;
   }
 
-  if (game.screen === "ending") return <main className="vespera"><section className="ending">
+  if (game.screen === "ending") return <AppBackground><main className="vespera"><section className="ending">
     <div className="eyebrow">EVENTO CANÔNICO CONCLUÍDO</div>
     <h1>O Oráculo sorriu.</h1>
     <p>{consequenceText(game)}</p>
@@ -486,9 +485,9 @@ export default function App() {
     {memories.map((m, i) => <p className="memory" key={i}>✦ {m}</p>)}
     <button className="primary" onClick={() => setGame(s => ({...s, screen: "reading", nodeId: "chapter4"}))}>CONTINUAR NO MUNDO <ArrowRight size={18}/></button>
     <button className="secondary" onClick={newGame}><RotateCcw size={16}/> NOVA CAMPANHA</button>
-  </section></main>;
+  </section></main></AppBackground>;
 
-  return <main className="vespera game-shell">
+  return <AppBackground><main className="vespera game-shell">
     <header className="hud">
       <div><div className="eyebrow">O ORÁCULO DE VESPERA</div><strong>CAPÍTULO {game.chapter}</strong></div>
       <div className="hud-actions">
@@ -497,7 +496,6 @@ export default function App() {
         <button onClick={() => setGame(s => ({...s, muted: !s.muted}))}>{game.muted ? <VolumeX size={17}/> : <Volume2 size={17}/>}</button>
       </div>
     </header>
-
     <div className="party">
       <HpBar name="ROBERTO" hp={game.robertoHp} max={game.robertoMaxHp} side="left"/>
       <div className="heart-link">♥<small>{game.affection}</small></div>
@@ -507,7 +505,6 @@ export default function App() {
       <span>⚔️ Roberto: <b>{game.robertoBuild.className}</b></span><span>👕 {game.robertoBuild.outfit}</span><span>✨ {game.robertoBuild.powers.join(", ")}</span>
       <span>⚔️ Alana: <b>{game.alanaBuild.className}</b></span><span>👕 {game.alanaBuild.outfit}</span><span>✨ {game.alanaBuild.powers.join(", ")}</span>
     </div>
-
     <div className="game-grid">
       <aside className="memory-panel">
         <div className="panel-title"><Brain size={16}/> MEMÓRIA DO ORÁCULO</div>
@@ -515,7 +512,6 @@ export default function App() {
         {memories.map((m, i) => <div className="memory" key={i}>{m}</div>)}
         <div className="meters"><span>❤️ {game.affection}</span><span>🤝 {game.trust}</span><span>⚡ {game.courage}</span><span>🔮 {game.curiosity}</span></div>
       </aside>
-
       <article className="story">
         {node.cinematic && <Media kind={node.cinematic}/>}
         <div className="chapter-label">{node.chapterTitle}</div>
@@ -523,12 +519,10 @@ export default function App() {
         <div className="location">✦ {node.location} • {node.mood}</div>
         {node.paragraphs(game).map((p, i) => <p key={i}>{p}</p>)}
         {node.quote && <blockquote>{node.quote(game)}</blockquote>}
-
         {game.screen === "battle" && <div className="boss-hud">
           <div className="boss-name"><Swords size={18}/> O DEVORADOR DE INSTANTES <span>{Math.max(0, Math.round(game.bossHp))} HP</span></div>
           <div className="boss-track"><div style={{width: `${clamp((game.bossHp/game.bossMaxHp)*100,0,100)}%`}}/></div>
         </div>}
-
         <div className="choice-heading">
           <span>DECISÃO</span>
           <small>{lastActor === "roberto" ? "Roberto decidiu" : lastActor === "alana" ? "Alana decidiu" : "Decisão conjunta"}</small>
@@ -541,7 +535,6 @@ export default function App() {
         </div>
       </article>
     </div>
-
     {game.paused && <div className="pause-overlay"><div className="pause-card"><Pause size={24}/><h2>VESPERA EM PAUSA</h2><p>Conversem. Decidam juntos. O Oráculo espera.</p><button className="primary" onClick={togglePause}><Play size={17}/> CONTINUAR</button><button className="secondary" onClick={newGame}>RECOMEÇAR</button></div></div>}
-  </main>;
+  </main></AppBackground>;
 }

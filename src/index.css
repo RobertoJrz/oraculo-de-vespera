@@ -124,3 +124,8 @@ blockquote { border-left:2px solid #8c263a; padding:5px 20px; color:#d8bd87; fon
 .loadout-bar span { background:#0b0d16; border:1px solid #252737; border-radius:99px; padding:5px 8px; color:#888793; font-size:9px; }
 .loadout-bar b { color:#c9b886; }
 @media(max-width:800px){ .arsenal-grid{grid-template-columns:1fr;} .option-grid{grid-template-columns:1fr;} .arsenal{padding:10px 13px 35px;} }
+.game-content {
+  position: relative;
+  z-index: 20;
+  min-height: 100vh;
+}
